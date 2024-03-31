@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import confetti from "canvas-confetti";
 
 const initialSuppliers = [
   { name: "Salesforce", logo: "https://logo.clearbit.com/salesforce.com" },
@@ -112,12 +113,17 @@ const initialSuppliers = [
   { name: "6Sense", logo: "https://logo.clearbit.com/6sense.com" },
   { name: "1Password", logo: "https://logo.clearbit.com/1password.com" },
 ];
-
 function Card({ supplier }) {
   return (
     <div className="block w-[300px] p-6 cursor-pointer bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-      <p>{supplier.name}</p>
-      <img src={supplier.logo} alt={`${supplier.name} logo`} />
+      <div className="flex flex-col justify-center items-center">
+        <p>{supplier.name}</p>
+        <img
+          src={supplier.logo}
+          className="rounded-lg"
+          alt={`${supplier.name} logo`}
+        />
+      </div>
     </div>
   );
 }
@@ -145,7 +151,7 @@ const showToast = (supplierName, side) => {
   toast.style.position = "absolute";
   toast.style.top = "5vh";
   toast.style.left = "80vh";
-  toast.style.border = "2px solid #333";
+  toast.style.padding = "3px";
   toast.style.backgroundColor =
     side === "left" ? "rgb(252 165 165)" : "rgb(187 247 208)";
   toast.style.borderRadius = "10px";
@@ -157,9 +163,65 @@ const showToast = (supplierName, side) => {
     document.body.removeChild(toast);
   }, 3000);
 };
+const showModal = (supplierName) => {
+  const modal = document.createElement("div");
+  modal.style.position = "fixed";
+  modal.style.top = "50%";
+  modal.style.left = "50%";
+  modal.style.transform = "translate(-50%, -50%)";
+  modal.style.width = "500px";
+  modal.style.height = "300px";
+  modal.style.padding = "20px";
+  modal.style.backgroundColor = "white";
+  modal.style.border = "1px solid black";
+  modal.style.zIndex = "1000";
+
+  const modalContent = document.createElement("div");
+  modalContent.innerHTML = `Congrats, it's a match! <br> <br> ${supplierName} is ready to click with your stack!`;
+  modalContent.style.fontFamily = "'Arial', sans-serif";
+  modalContent.style.fontSize = "24px";
+  modalContent.style.textAlign = "center";
+
+  modal.appendChild(modalContent);
+  const closeButton = document.createElement("button");
+  closeButton.textContent = "Close";
+  closeButton.style.position = "absolute";
+  closeButton.style.bottom = "10px";
+  closeButton.style.left = "20%";
+  closeButton.style.transform = "translateX(-50%)";
+  closeButton.style.padding = "10px 20px";
+  closeButton.style.fontSize = "16px";
+  closeButton.style.color = "white";
+  closeButton.style.backgroundColor = "#4B5563"; // Gray-700
+  closeButton.style.border = "none";
+  closeButton.style.borderRadius = "5px";
+  closeButton.style.cursor = "pointer";
+  closeButton.onclick = () => document.body.removeChild(modal);
+  modal.appendChild(closeButton);
+
+  const infoButton = document.createElement("button");
+  infoButton.textContent = "See more data about this vendor!";
+  infoButton.style.position = "absolute";
+  infoButton.style.bottom = "10px";
+  infoButton.style.left = "70%";
+  infoButton.style.transform = "translateX(-50%)";
+  infoButton.style.padding = "10px 20px";
+  infoButton.style.fontSize = "16px";
+  infoButton.style.color = "white";
+  infoButton.style.backgroundColor = "#ec61b2";
+  infoButton.style.border = "none";
+  infoButton.style.borderRadius = "5px";
+  infoButton.style.cursor = "pointer";
+  infoButton.onclick = () =>
+    (window.location.href = "https://nick-smith8.github.io/rickroll/");
+  modal.appendChild(infoButton);
+
+  document.body.appendChild(modal);
+};
 
 export default function Home() {
   const [suppliers, setSuppliers] = useState(initialSuppliers);
+  const [rightDrops, setRightDrops] = useState(0);
 
   const handleDragStart = (e, supplier) => {
     e.dataTransfer.setData("text/plain", supplier.name);
@@ -167,7 +229,24 @@ export default function Home() {
 
   const handleDrop = (e, side) => {
     const supplierName = e.dataTransfer.getData("text");
-    showToast(supplierName, side);
+    if (side === "right") {
+      setRightDrops(rightDrops + 1);
+
+      if (rightDrops % 2 === 0) {
+        console.log("hello world", supplierName, "oh no");
+        showModal(supplierName);
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+      } else {
+        showToast(supplierName, side);
+      }
+    } else {
+      showToast(supplierName, side);
+    }
+
     e.target.style.backgroundColor = "";
     setSuppliers(
       suppliers.filter((supplier) => supplier.name !== supplierName)
@@ -191,7 +270,7 @@ export default function Home() {
         404: Compatibility Not Found
       </div>
       <div className="flex-1 flex flex-col gap-4 items-center overflow-auto h-full ">
-        <p className="text-2xl font-serif text-gray-800">
+        <p className="text-2xl font-serif text-gray-800 mt-5">
           Hello Tropic! 👋 Let's find a match together
         </p>
         {suppliers.map((supplier, index) => (
