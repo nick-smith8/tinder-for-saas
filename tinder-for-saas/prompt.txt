@@ -1,0 +1,6 @@
+Please build a tinder for saas page for me.  The following requirements should be implemented:
+1. The page should follow a 3 column design utilizing flex for the styling.  The left column is the ‘swipe left’ column, middle column is the column that will show a card for the software supplier, the right column is the ‘swipe right’ column.
+2. The cards in the middle columns should be draggable to the ‘swipe left’ or swipe right column.  If a card is dragged into one of these columns then there should be an alert that shows the supplier name that was dragged into that column
+3. The middle software cards should show the supplier name and a supplier logo
+4. You should implement the logic for the state handlers when a card is dragged from the middle column
+5. You should have a base array of suppliers that is filled with objects that have a name / logo which the middle column will show
