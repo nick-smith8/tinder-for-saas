@@ -272,6 +272,9 @@ export default function Home() {
       <div className="flex-1 flex flex-col gap-4 items-center overflow-auto h-full ">
         <p className="text-2xl font-serif text-gray-800 mt-5">
           Hello Tropic! 👋 Let&apos;s find a match together
+          <p className="text-sm font-serif text-gray-600 mt-2">
+            {Math.floor(Math.random() * 151)} people are currently swiping!
+          </p>
         </p>
         {suppliers.map((supplier, index) => (
           <div
